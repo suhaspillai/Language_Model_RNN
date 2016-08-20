@@ -8,10 +8,11 @@ import cPickle as cp
 cm.cuda_set_device(0)
 cm.init()
 
-
+#--------------------------Check Timings of Naive and CUda version--------------------#
 #------------------------------LSTM forward CPU version-------------------------------#
 lstm_layer_obj  = Layer()
 lstm_layer_obj_cuda = Layer_cuda()
+#Increase size of matrices
 input_size = 5
 hidden_size = 10
 num_classes = 10
