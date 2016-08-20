@@ -96,7 +96,7 @@ class Layer_cuda():
 
     def forward_propagation_restructure(self, X, model,h):
         '''
-        The method computes forward propagfation for LSTM
+        The method computes forward propagation for LSTM layer
 
         Input :
         X - 1D Input to the lstm layer,the first column is padded with zeros. size N * T,where N is number of inputs,
@@ -199,7 +199,7 @@ class Layer_cuda():
             h.set_col_slice(t,t+1,o_gate)
 
         cache = (X,model,h,cell_state,arr_i,arr_f,arr_o,arr_g)
-        # Need to delete aal the temproray matrces created, for some reason these are not garbage collected.
+        # Need to delete all the temproray matrices created, for some reason these are not garbage collected.
         # when using CUDAMAT
         
         del temp_i,temp_f,temp_o,temp_g,temp_x,temp_h       
@@ -212,7 +212,7 @@ class Layer_cuda():
         Backward pass for LSTM layer
 
         Input:
-        dout - error derivatives from the top layers
+        dout - Gradients from the top layers
         cache - (X,model,h,cell_state,arr_i,arr_f,arr_o,arr_g)
 
         Output:
@@ -344,10 +344,8 @@ class Layer_cuda():
             dout_h_3.set_col_slice(t,t+1,temp_es)
              
 
-        # Gradients with respect to input
-        dW_xi = cm.dot(X,dout_h_0.get_col_slice(0,T).T)
-
         # Gradient with respect to Weights
+        dW_xi = cm.dot(X,dout_h_0.get_col_slice(0,T).T)
         dW_xf  = cm.dot(X,dout_h_1.get_col_slice(0,T).T) 
         dW_xo = cm.dot(X,dout_h_2.get_col_slice(0,T).T) 
         dW_xg = cm.dot(X,dout_h_3.get_col_slice(0,T).T)
@@ -361,6 +359,8 @@ class Layer_cuda():
         dout_h_1.sum(axis = 1, target = db_f)
         dout_h_2.sum(axis = 1, target = db_o)
         dout_h_3.sum(axis = 1, target = db_g)
+        
+        #Gradients with respect to input
         dx.add(cm.dot(W_xi.T,dout_h_0).get_col_slice(0,T))
         dx.add(cm.dot(W_xf.T,dout_h_1).get_col_slice(0,T))
         dx.add(cm.dot(W_xo.T,dout_h_2).get_col_slice(0,T))
@@ -368,7 +368,7 @@ class Layer_cuda():
 
         grads ={'W_xi':dW_xi,'W_xf':dW_xf,'W_xo':dW_xo, 'W_xg':dW_xg,'W_hi':dW_hi, 'W_hf':dW_hf, 'W_ho':dW_ho, 'W_hg':dW_hg, 'b_i':db_i,'b_f':db_f,'b_o':db_o,'b_g':db_g}
 
-        # Need to delete all the temporary matrices,for some reason this is not garabage collected when I use CUDAMAT.Need to check 
+        # Need to delete all the temporary matrices,for some reason these are not garabage collected when I use CUDAMAT.Need to check 
         del temp_ec
         del temp_es
         del temp_ones
