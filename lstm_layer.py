@@ -124,7 +124,7 @@ class Layer:
         h - hidden layer for lstm layer, matrix of all zeros. Dimensions same as X
 
         Output:
-        h - hidden layer for lstm layer. T*N ,where N is number of hidden units,
+        h - hidden layer with LSTM block. T*N ,where N is number of hidden units,
         T is number of time steps.
         cache - (X,model,h,cell_state,arr_i,arr_f,arr_o,arr_g)
         '''
@@ -173,7 +173,7 @@ class Layer:
 
     def backward_propagation(self,dout,cache):
         '''
-        backward pass for LSTM layer.
+        Backward pass for LSTM layer.
         Input :
         dout - gradients from top layer
         cache - (X,model,h,cell_state,arr_i,arr_f,arr_o,arr_g)
