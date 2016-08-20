@@ -173,7 +173,7 @@ class Layer:
 
     def backward_propagation(self,dout,cache):
         '''
-        Backward pass for LSTM layer.
+        Naive backward pass for LSTM layer.
         Input :
         dout - gradients from top layer
         cache - (X,model,h,cell_state,arr_i,arr_f,arr_o,arr_g)
